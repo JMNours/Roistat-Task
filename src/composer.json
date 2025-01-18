@@ -1,0 +1,16 @@
+{
+    "name": "nours/roistat_task",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Project\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Eugene Miroshnichenko",
+            "email": "JenaiNours@yandex.ru"
+        }
+    ],
+    "require": {}
+}

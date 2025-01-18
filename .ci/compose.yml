@@ -1,0 +1,17 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx/config:/etc/nginx/conf.d
+      - ./../src/:/var/www/html
+    links:
+      - php
+
+  php:
+    build: ./php
+    container_name: php-fpm
+    volumes:
+      - ./../src:/var/www/html
