@@ -10,10 +10,12 @@ class HttpClient
     private CurlHandle $ch;
 
     private string $url;
-    private array $postFields = [];
-    private array $getParams = [];
+    private $postFields;
+    private $getParams;
     private string $method = 'GET';
     private array $headers = [];
+
+    private $response;
 
     public function __construct()
     {
@@ -25,14 +27,24 @@ class HttpClient
         if(!isset($this->url))
             throw new Exception('Url is empty');
         
-        if (!empty($this->getParams)) {
-            curl_setopt($this->ch, CURLOPT_URL, $this->url. "?" . http_build_query($this->getParams));
+        if (isset($this->getParams)) {
+            if(is_array($this->getParams))
+                $getParams = http_build_query($this->getParams);
+            else
+                $getParams = $this->getParams;
+
+            curl_setopt($this->ch, CURLOPT_URL, $this->url . "?$getParams");
         } else {
             curl_setopt($this->ch, CURLOPT_URL, $this->url);
         }
 
-        if(!empty($this->postFields)){
-            curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query($this->postFields));
+        if(isset($this->postFields)){
+            if(is_array($this->getParams))
+                $postFields = http_build_query($this->postFields);
+            else
+                $postFields = $this->postFields;
+
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $postFields);
         }
 
         if ($this->method != 'GET') {
@@ -48,11 +60,11 @@ class HttpClient
         if(!empty($this->headers)){    
             curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->headers);
         }
-
-        curl_setopt($this->ch, CURLOPT_HEADER  ,true);
+        
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
 
-        return curl_exec($this->ch);
+        $this->response = curl_exec($this->ch);
+        return $this->response;
     }
 
     public function setUrl(string $url)
@@ -65,12 +77,12 @@ class HttpClient
         $this->method = $method;
     }
 
-    public function setPostFields(array $params)
+    public function setPostFields($params)
     {
         $this->postFields = $params;
     }
 
-    public function setGetParams(array $params)
+    public function setGetParams($params)
     {
         $this->getParams = $params;
     }
@@ -83,6 +95,11 @@ class HttpClient
     public function getRequestInfo()
     {
         return curl_getinfo($this->ch);
+    }
+    
+    public function getResponse()
+    {
+        return $this->response;
     }
     
     public function getHttpCode()

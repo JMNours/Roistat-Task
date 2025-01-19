@@ -17,7 +17,7 @@ class AmoClient {
         $client = $this->getHttpClient();
         $client->setUrl("{$this->domain}/api/v4/leads");
         $client->setMethod('POST');
-        $client->setPostFields($body);
+        $client->setPostFields(json_encode($body));
 
         return $this->request($client);
     }
@@ -26,16 +26,16 @@ class AmoClient {
         $client = $this->getHttpClient();
         $client->setUrl("{$this->domain}/api/v4/contacts");
         $client->setMethod('POST');
-        $client->setPostFields($body);
+        $client->setPostFields(json_encode($body));
 
         return $this->request($client);
     }
 
-    public function addLeadsComplex(array  $body){
+    public function addLeadsComplex(array $body){
         $client = $this->getHttpClient();
         $client->setUrl("{$this->domain}/api/v4/leads/complex");
         $client->setMethod('POST');
-        $client->setPostFields($body);
+        $client->setPostFields(json_encode($body));
 
         return $this->request($client);
     }
@@ -44,7 +44,7 @@ class AmoClient {
     {
         $client = new HttpClient();
         $client->addHeader("Authorization: Bearer {$this->accessToken}");
-        $client->addHeader("Content-Type:application/json");
+        $client->addHeader("Content-Type: application/json");
 
         return $client;
     }
@@ -52,8 +52,8 @@ class AmoClient {
     protected function request(HttpClient $client){
         $response = $client->execute();
 
-        if($client->getHttpCode() < 200 && $client->getHttpCode() >= 300){
-            throw new Exception('Failed request', $client->getHttpCode());                
+        if($client->getHttpCode() < 200 || $client->getHttpCode() >= 300){
+            throw new Exception("Failed request, {$client->getResponse()}", $client->getHttpCode());                
         }
 
         return $response;

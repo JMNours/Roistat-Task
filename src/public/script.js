@@ -1,15 +1,15 @@
 let addField = false;
-let countdown = 3;
+let countdown = 30;
 
 window.onload = function() {
-        
+
     setTimeout(function () {
         addField = true;
     }, countdown * 1000);
 
     let form  = document.getElementById("sendLeadForm");
         
-    form.addEventListener("submit",  (e) => {
+    form.addEventListener("submit", (e) => {
         e.preventDefault();
 
         let formData = new FormData(form);
@@ -17,7 +17,7 @@ window.onload = function() {
         if (addField) {
             formData.append('additional', true);
         }
-
+        
         sendRequest(formData);
     })
 }
